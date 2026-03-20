@@ -1,19 +1,12 @@
 const mongoose = require('mongoose');
 
 const modelSchema = new mongoose.Schema({
-    nomeGenero: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    descricao: {
-        type: String,
-        trim: true,
-        default: ''
-    }
+    idGenero: String,
+    nomeGenero: String,
+    descricao: String
 });
 
-const modelName = 'Generos';
+const modelName = 'Genero';
 
 if (mongoose.connection && mongoose.connection.models[modelName]) {
     module.exports = mongoose.connection.models[modelName];

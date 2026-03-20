@@ -1,23 +1,24 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const cors = require('cors');
-const apiRouters = require('./routers/router');
-
 require('dotenv').config({ path: 'variables.env' });
 
-mongoose.connect(process.env.DATABASE);
-mongoose.Promise = global.Promise;
+const apiRouters = require('./routers/router');
 
-mongoose.connection.on('error', (error) => {
-    console.error(`Error connecting to database: ${error.message}`);
+const app = express();
+
+mongoose.connect(process.env.DATABASE);
+
+mongoose.connection.on('connected', () => {
+    console.log('MongoDB conectado com sucesso!');
 });
 
-const server = express();
+mongoose.connection.on('error', (error) => {
+    console.log('Erro ao conectar no MongoDB: ' + error.message);
+});
 
-server.use(cors());
-server.use(express.json());
-server.use('/', apiRouters);
+app.use(express.json());
+app.use('/', apiRouters);
 
-const servico = server.listen(process.env.PORT, () => {
-    console.log('Servidor rodando na porta ' + servico.address().port);
+app.listen(process.env.PORT, () => {
+    console.log('Servidor rodando na porta ' + process.env.PORT);
 });
