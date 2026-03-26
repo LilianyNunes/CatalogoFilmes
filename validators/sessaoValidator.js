@@ -2,15 +2,17 @@ const { checkSchema } = require('express-validator');
 
 module.exports = {
     addSessao: checkSchema({
+        idSessao: {
+            notEmpty: true,
+            errorMessage: 'idSessao é obrigatório'
+        },
         idFilme: {
             notEmpty: true,
-            isMongoId: true,
-            errorMessage: 'O idFilme deve ser um ObjectId válido.'
+            errorMessage: 'idFilme é obrigatório'
         },
         idSala: {
             notEmpty: true,
-            isMongoId: true,
-            errorMessage: 'O idSala deve ser um ObjectId válido.'
+            errorMessage: 'idSala é obrigatório'
         },
         dataSessao: {
             notEmpty: true,
