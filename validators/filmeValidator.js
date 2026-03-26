@@ -2,39 +2,43 @@ const { checkSchema } = require('express-validator');
 
 module.exports = {
     addFilme: checkSchema({
+        idFilme: {
+            notEmpty: true,
+            errorMessage: 'idFilme é obrigatório'
+        },
         titulo: {
             notEmpty: true,
-            errorMessage: 'O título é obrigatório.'
+            errorMessage: 'Título é obrigatório'
         },
         sinopse: {
             notEmpty: true,
-            errorMessage: 'A sinopse é obrigatória.'
+            errorMessage: 'Sinopse é obrigatória'
         },
         duracaoMinutos: {
             notEmpty: true,
             isInt: true,
-            errorMessage: 'A duração deve ser um número inteiro.'
+            errorMessage: 'Duração deve ser número inteiro'
         },
         classificacaoIndicativa: {
             notEmpty: true,
-            errorMessage: 'A classificação indicativa é obrigatória.'
+            errorMessage: 'Classificação indicativa é obrigatória'
         },
         genero: {
             notEmpty: true,
-            errorMessage: 'O gênero é obrigatório.'
+            errorMessage: 'Gênero é obrigatório'
         },
         idioma: {
             notEmpty: true,
-            errorMessage: 'O idioma é obrigatório.'
+            errorMessage: 'Idioma é obrigatório'
         },
         statusExibicao: {
             notEmpty: true,
-            errorMessage: 'O status de exibição é obrigatório.'
+            errorMessage: 'Status de exibição é obrigatório'
         },
         dataLancamento: {
             notEmpty: true,
             isISO8601: true,
-            errorMessage: 'A data de lançamento deve ser válida.'
+            errorMessage: 'Data de lançamento inválida'
         }
     })
 };
