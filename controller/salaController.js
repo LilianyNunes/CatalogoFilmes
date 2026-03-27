@@ -15,7 +15,6 @@ module.exports = {
             idSala: data.idSala,
             nomeSala: data.nomeSala,
             capacidadeTotal: data.capacidadeTotal,
-            tipoSala: data.tipoSala,
             statusSala: data.statusSala
         });
 

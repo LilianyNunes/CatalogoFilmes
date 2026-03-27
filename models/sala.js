@@ -4,7 +4,6 @@ const modelSchema = new mongoose.Schema({
     idSala: String,
     nomeSala: String,
     capacidadeTotal: Number,
-    tipoSala: String,
     statusSala: String
 });
 

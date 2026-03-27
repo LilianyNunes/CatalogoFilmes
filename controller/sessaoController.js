@@ -19,7 +19,8 @@ module.exports = {
             horarioInicio: data.horarioInicio,
             horarioFim: data.horarioFim,
             valorIngresso: data.valorIngresso,
-            statusSessao: data.statusSessao
+            statusSessao: data.statusSessao,
+            assento: data.assento
         });
 
         await novaSessao.save();
@@ -30,5 +31,19 @@ module.exports = {
     getSessoes: async (req, res) => {
         const sessoes = await Sessao.find();
         res.json({ sessoes });
+    },
+
+    updateAssento: async (req, res) => {
+        try {
+            const sessaoAtualizada = await Sessao.findOneAndUpdate(
+                { idSessao: req.params.idSessao },
+                { assento: req.body.assento },
+                { new: true }
+            );
+
+            res.json({ sessao: sessaoAtualizada });
+        } catch (error) {
+            res.json({ erro: error.message });
+        }
     }
 };

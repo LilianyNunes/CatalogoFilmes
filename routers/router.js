@@ -11,6 +11,7 @@ const salaValidator = require('../validators/salaValidator');
 const sessaoValidator = require('../validators/sessaoValidator');
 const generoValidator = require('../validators/generoValidator');
 
+
 router.get('/ping', (req, res) => {
     res.json({ retorno: true });
 });
@@ -26,6 +27,7 @@ router.get('/salas', salaController.getSalas);
 // SESSOES
 router.post('/sessoes', sessaoValidator.addSessao, sessaoController.addSessao);
 router.get('/sessoes', sessaoController.getSessoes);
+router.put('/sessoes/:idSessao/assento', sessaoController.updateAssento);
 
 // GENEROS
 router.post('/generos', generoValidator.addGenero, generoController.addGenero);

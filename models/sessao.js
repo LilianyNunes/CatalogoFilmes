@@ -8,7 +8,7 @@ const modelSchema = new mongoose.Schema({
     horarioInicio: String,
     horarioFim: String,
     valorIngresso: Number,
-    statusSessao: String
+    statusSessao: String,
 });
 
 const modelName = 'Sessao';

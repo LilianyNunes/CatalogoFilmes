@@ -2,6 +2,10 @@ const { checkSchema } = require('express-validator');
 
 module.exports = {
     addSala: checkSchema({
+        idSala: {
+            notEmpty: true,
+            errorMessage: 'idSala é obrigatório'
+        },
         nomeSala: {
             notEmpty: true,
             trim: true,
@@ -13,16 +17,9 @@ module.exports = {
         capacidadeTotal: {
             notEmpty: true,
             isInt: {
-                options: { min: 1, max: 1000 }
+                options: { min: 1, max: 100 }
             },
-            errorMessage: 'A capacidade total deve ser um número inteiro entre 1 e 1000.'
-        },
-        tipoSala: {
-            notEmpty: true,
-            isIn: {
-                options: [['2D', '3D']]
-            },
-            errorMessage: 'O tipo da sala deve ser 2D ou 3D.'
+            errorMessage: 'A capacidade total deve ser um número inteiro entre 1 e 100.'
         },
         statusSala: {
             notEmpty: true,
