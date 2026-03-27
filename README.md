@@ -7,19 +7,22 @@ API desenvolvida em **Node.js** com **MongoDB** para gerenciamento de 🎥 filme
 ## 🚀 Como rodar o projeto
 
 ### 1. Instalar dependências
-
-npm install
+```json
+npm install express mongoose cors dotenv express-validator
+```
 
 ### 2. Configurar o banco
 
 Criar o arquivo `variables.env` com:
-
+```json
 PORT=7773  
 DATABASE=mongodb://localhost:27017/CatalogoFilmes
+```
 
 ### 3. Rodar o servidor
-
+```json
 npm run start
+```
 
 ---
 
