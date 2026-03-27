@@ -1,32 +1,33 @@
+const { validationResult, matchedData } = require('express-validator');
 const Filme = require('../models/filme');
 
 module.exports = {
     addFilme: async (req, res) => {
-        const novoFilme = new Filme({
-            titulo: req.body.titulo,
-            sinopse: req.body.sinopse,
-            duracaoMinutos: req.body.duracaoMinutos
-        });
+        try {
+            const errors = validationResult(req);
 
-        await novoFilme.save();
+            if (!errors.isEmpty()) {
+                return res.json({ error: errors.mapped() });
+            }
 
-        res.json({ filme: novoFilme });
+            const data = matchedData(req);
+
+            const novoFilme = new Filme(data);
+
+            await novoFilme.save();
+
+            res.json({ filme: novoFilme });
+        } catch (error) {
+            res.json({ erro: error.message });
+        }
     },
 
     getFilmes: async (req, res) => {
-        const filmes = await Filme.find();
-        res.json({ filmes });
-    },
-
-    testeFilme: async (req, res) => {
-        const novoFilme = new Filme({
-            titulo: 'Teste Controller',
-            sinopse: 'Filme vindo do controller',
-            duracaoMinutos: 100
-        });
-
-        await novoFilme.save();
-
-        res.json({ filme: novoFilme });
+        try {
+            const filmes = await Filme.find();
+            res.json({ filmes });
+        } catch (error) {
+            res.json({ erro: error.message });
+        }
     }
 };
