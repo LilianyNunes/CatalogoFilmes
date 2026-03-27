@@ -7,20 +7,23 @@ API desenvolvida em **Node.js** com **MongoDB** para gerenciamento de 🎥 filme
 ## 🚀 Como rodar o projeto
 
 ### 1. Instalar dependências
-```json
+
+```bash
 npm install express mongoose cors dotenv express-validator
 ```
 
 ### 2. Configurar o banco
 
-Criar o arquivo `variables.env` com:
-```json
-PORT=7773  
+Criar o arquivo `variables.env`:
+
+```env
+PORT=7773
 DATABASE=mongodb://localhost:27017/CatalogoFilmes
 ```
 
 ### 3. Rodar o servidor
-```json
+
+```bash
 npm run start
 ```
 
@@ -28,42 +31,30 @@ npm run start
 
 ## 🌐 Rotas para teste no navegador
 
-Teste de funcionamento:  
-```json
+Teste de funcionamento:
 http://localhost:7773/ping
-```
 
 Listar filmes:
-```json
 http://localhost:7773/filmes
-``` 
 
-Listar salas: 
-```json
+Listar salas:
 http://localhost:7773/salas
-```
 
-Listar sessões:  
-```json
+Listar sessões:
 http://localhost:7773/sessoes
-``` 
 
-Listar gêneros:  
-```json
-http://localhost:7773/generos  
-```
+Listar gêneros:
+http://localhost:7773/generos
+
 ---
 
 ## 📬 Rotas POST para teste (Postman / Thunder Client)
 
 ### 🎭 Criar gênero
 
-POST → http://localhost:7773/generos  
-
-Body JSON:
+POST → http://localhost:7773/generos
 
 ```json
-
 {
   "idGenero": "1",
   "nomeGenero": "Ação",
@@ -75,12 +66,9 @@ Body JSON:
 
 ### 🎬 Criar filme
 
-POST → http://localhost:7773/filmes  
-
-Body JSON:
+POST → http://localhost:7773/filmes
 
 ```json
-
 {
   "idFilme": "1",
   "titulo": "Batman",
@@ -98,12 +86,9 @@ Body JSON:
 
 ### 🏢 Criar sala
 
-POST → http://localhost:7773/salas  
-
-Body JSON:
+POST → http://localhost:7773/salas
 
 ```json
-
 {
   "idSala": "1",
   "nomeSala": "Sala 1",
@@ -117,12 +102,9 @@ Body JSON:
 
 ### 🎟️ Criar sessão
 
-POST → http://localhost:7773/sessoes  
-
-Body JSON:
+POST → http://localhost:7773/sessoes
 
 ```json
-
 {
   "idSessao": "1",
   "idFilme": "1",
@@ -137,101 +119,155 @@ Body JSON:
 
 ---
 
+## 🛑 Testes de validação (dados inválidos)
+
+A API utiliza **express-validator** para validar os dados.
+
+### ❌ Filme inválido
+
+```json
+{
+  "idFilme": "",
+  "titulo": "",
+  "sinopse": "",
+  "duracaoMinutos": "abc",
+  "classificacaoIndicativa": "",
+  "genero": "",
+  "idioma": "",
+  "statusExibicao": "",
+  "dataLancamento": "data invalida"
+}
+```
+
+---
+
+### ❌ Sala inválida
+
+```json
+{
+  "nomeSala": "",
+  "capacidadeTotal": "abc",
+  "tipoSala": "5D",
+  "statusSala": ""
+}
+```
+
+---
+
+### ❌ Sessão inválida
+
+```json
+{
+  "idSessao": "",
+  "idFilme": "",
+  "idSala": "",
+  "dataSessao": "data errada",
+  "horarioInicio": "25:00",
+  "horarioFim": "99:99",
+  "valorIngresso": -10,
+  "statusSessao": "TESTE"
+}
+```
+
+---
+
+### ❌ Gênero inválido
+
+```json
+{
+  "nomeGenero": "",
+  "descricao": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+```
+
+---
+
 ## 🧪 Ordem recomendada para testes
 
-1️⃣ Criar gênero  
-2️⃣ Criar filme  
-3️⃣ Criar sala  
-4️⃣ Criar sessão  
+1. Criar gênero  
+2. Criar filme  
+3. Criar sala  
+4. Criar sessão  
 
 ---
 
 ## 🗂️ Estrutura do projeto
 
-controller/  
-├── filmeController.js  
-├── generoController.js  
-├── salaController.js  
-└── sessaoController.js  
+```text
+controller/
+├── filmeController.js
+├── generoController.js
+├── salaController.js
+└── sessaoController.js
 
-models/  
-├── filme.js  
-├── genero.js  
-├── sala.js  
-└── sessao.js  
+models/
+├── filme.js
+├── genero.js
+├── sala.js
+└── sessao.js
 
-validators/  
-├── filmeValidator.js  
-├── generoValidator.js  
-├── salaValidator.js  
-└── sessaoValidator.js  
+validators/
+├── filmeValidator.js
+├── generoValidator.js
+├── salaValidator.js
+└── sessaoValidator.js
 
-routers/  
-└── router.js  
+routers/
+└── router.js
 
-server.js  
-variables.env  
-package.json  
-package-lock.json  
-.gitignore  
+server.js
+variables.env
+package.json
+package-lock.json
+.gitignore
+```
 
 ---
 
 ## ⚙️ Tecnologias utilizadas
 
-- 🟢 Node.js  
-- ⚡ Express  
-- 🍃 MongoDB  
-- 🧩 Mongoose  
-- ✅ Express Validator  
-- 🌐 CORS  
-- 🔐 Dotenv  
+- Node.js  
+- Express  
+- MongoDB  
+- Mongoose  
+- Express Validator  
+- CORS  
+- Dotenv  
 
 ---
 
 ## ✨ Funcionalidades implementadas
 
-✔ Cadastro de gêneros  
-✔ Cadastro de filmes  
-✔ Cadastro de salas  
-✔ Cadastro de sessões  
-✔ Listagem de gêneros  
-✔ Listagem de filmes  
-✔ Listagem de salas  
-✔ Listagem de sessões  
-✔ Validação de dados  
-✔ Persistência no banco de dados  
+- Cadastro de gêneros  
+- Cadastro de filmes  
+- Cadastro de salas  
+- Cadastro de sessões  
+- Listagem de dados  
+- Validação de dados  
+- Persistência no banco  
 
 ---
 
 ## 🔄 Fluxo de teste
 
 1. Rodar o servidor  
-   npm run start  
-
-2. Testar conexão  
-   http://localhost:7773/ping  
-
+2. Testar `/ping`  
 3. Inserir dados via POST  
-
-4. Verificar dados via navegador  
-
+4. Verificar via GET  
 5. Conferir no MongoDB Compass  
 
 ---
 
 ## 📌 Observação
 
-As collections já estão criadas no banco, e os testes podem ser realizados inserindo dados em tempo real pela API.
+As collections já estão criadas no banco.
 
 ---
 
 ## 👩‍💻 Autoria
 
-Projeto desenvolvido por:
-
-- Ianny Correia de Souza
-- Liliany Nunes de Souza    
+- Ianny Correia de Souza  
+- Liliany Nunes de Souza  
 - Maycon Geovane do Carmo Costa  
 
-📚 Disciplina: Sistemas Distribuídos  
+Disciplina: Sistemas Distribuídos
