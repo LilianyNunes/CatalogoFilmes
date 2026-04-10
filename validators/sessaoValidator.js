@@ -2,51 +2,68 @@ const { checkSchema } = require('express-validator');
 
 module.exports = {
     addSessao: checkSchema({
-        idSessao: {
-            notEmpty: true,
-            errorMessage: 'idSessao é obrigatório'
-        },
+        // ✅ isMongoId valida ObjectId do MongoDB
         idFilme: {
-            notEmpty: true,
-            errorMessage: 'idFilme é obrigatório'
+            notEmpty: {
+                errorMessage: 'idFilme é obrigatório.'
+            },
+            isMongoId: {
+                errorMessage: 'idFilme inválido. Deve ser um ObjectId do MongoDB.'
+            }
         },
+        // ✅ isMongoId valida ObjectId do MongoDB
         idSala: {
-            notEmpty: true,
-            errorMessage: 'idSala é obrigatório'
+            notEmpty: {
+                errorMessage: 'idSala é obrigatório.'
+            },
+            isMongoId: {
+                errorMessage: 'idSala inválido. Deve ser um ObjectId do MongoDB.'
+            }
         },
         dataSessao: {
-            notEmpty: true,
-            isISO8601: true,
-            toDate: true,
-            errorMessage: 'A data da sessão deve ser válida.'
+            notEmpty: {
+                errorMessage: 'A data da sessão é obrigatória.'
+            },
+            isISO8601: {
+                errorMessage: 'Data inválida. Use o formato ISO 8601 (ex: 2024-12-25).'
+            },
+            toDate: true
         },
         horarioInicio: {
-            notEmpty: true,
-            matches: {
-                options: [/^([01]\d|2[0-3]):([0-5]\d)$/]
+            notEmpty: {
+                errorMessage: 'O horário de início é obrigatório.'
             },
-            errorMessage: 'O horário de início deve estar no formato HH:MM.'
+            matches: {
+                options: [/^([01]\d|2[0-3]):([0-5]\d)$/],
+                errorMessage: 'Horário de início inválido. Use o formato HH:MM (ex: 14:30).'
+            }
         },
         horarioFim: {
-            notEmpty: true,
-            matches: {
-                options: [/^([01]\d|2[0-3]):([0-5]\d)$/]
+            notEmpty: {
+                errorMessage: 'O horário de fim é obrigatório.'
             },
-            errorMessage: 'O horário de fim deve estar no formato HH:MM.'
+            matches: {
+                options: [/^([01]\d|2[0-3]):([0-5]\d)$/],
+                errorMessage: 'Horário de fim inválido. Use o formato HH:MM (ex: 16:30).'
+            }
         },
         valorIngresso: {
-            notEmpty: true,
-            isFloat: {
-                options: { min: 0.01 }
+            notEmpty: {
+                errorMessage: 'O valor do ingresso é obrigatório.'
             },
-            errorMessage: 'O valor do ingresso deve ser maior que zero.'
+            isFloat: {
+                options: { min: 0.01 },
+                errorMessage: 'O valor do ingresso deve ser maior que zero.'
+            },
+            toFloat: true
         },
         statusSessao: {
-            notEmpty: true,
+            optional: { options: { nullable: true } },
             isIn: {
-                options: [['DISPONIVEL', 'CANCELADA', 'ENCERRADA']]
-            },
-            errorMessage: 'Status da sessão inválido.'
+                options: [['DISPONIVEL', 'CANCELADA', 'ENCERRADA']],
+                errorMessage: 'Status inválido. Use: DISPONIVEL, CANCELADA ou ENCERRADA.'
+            }
         }
+        // ❌ assento REMOVIDO — gerenciado pelo Grupo B
     })
 };

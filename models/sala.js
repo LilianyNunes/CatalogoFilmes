@@ -1,10 +1,25 @@
 const mongoose = require('mongoose');
 
+// ✅ Sem idSala manual — usa _id do MongoDB
 const modelSchema = new mongoose.Schema({
-    idSala: String,
-    nomeSala: String,
-    capacidadeTotal: Number,
-    statusSala: String
+    nomeSala: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    capacidadeTotal: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    statusSala: {
+        type: String,
+        enum: ['ATIVA', 'INATIVA', 'MANUTENCAO'],
+        default: 'ATIVA'
+    }
+}, {
+    timestamps: true,
+    versionKey: false
 });
 
 const modelName = 'Sala';

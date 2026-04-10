@@ -11,26 +11,28 @@ const salaValidator = require('../validators/salaValidator');
 const sessaoValidator = require('../validators/sessaoValidator');
 const generoValidator = require('../validators/generoValidator');
 
-
+// ── Health check ───────────────────────────────────────────────────
 router.get('/ping', (req, res) => {
     res.json({ retorno: true });
 });
 
-// FILMES
+// ── GÊNEROS ────────────────────────────────────────────────────────
+router.post('/generos', generoValidator.addGenero, generoController.addGenero);
+router.get('/generos', generoController.getGeneros);
+
+// ── FILMES ─────────────────────────────────────────────────────────
 router.post('/filmes', filmeValidator.addFilme, filmeController.addFilme);
 router.get('/filmes', filmeController.getFilmes);
 
-// SALAS
+// ── SALAS ──────────────────────────────────────────────────────────
 router.post('/salas', salaValidator.addSala, salaController.addSala);
 router.get('/salas', salaController.getSalas);
 
-// SESSOES
+// ── SESSÕES ────────────────────────────────────────────────────────
 router.post('/sessoes', sessaoValidator.addSessao, sessaoController.addSessao);
 router.get('/sessoes', sessaoController.getSessoes);
-router.put('/sessoes/:idSessao/assento', sessaoController.updateAssento);
 
-// GENEROS
-router.post('/generos', generoValidator.addGenero, generoController.addGenero);
-router.get('/generos', generoController.getGeneros);
+// ❌ PUT /sessoes/:idSessao/assento REMOVIDA
+//    Assentos são responsabilidade do Grupo B (API de Assentos)
 
 module.exports = router;

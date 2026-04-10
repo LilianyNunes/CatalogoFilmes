@@ -1,9 +1,19 @@
 const mongoose = require('mongoose');
 
+// ✅ Sem idGenero manual — usa _id do MongoDB
 const modelSchema = new mongoose.Schema({
-    idGenero: String,
-    nomeGenero: String,
-    descricao: String
+    nomeGenero: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    descricao: {
+        type: String,
+        trim: true
+    }
+}, {
+    timestamps: true,
+    versionKey: false
 });
 
 const modelName = 'Genero';

@@ -3,28 +3,37 @@ const Sala = require('../models/sala');
 
 module.exports = {
     addSala: async (req, res) => {
-        const errors = validationResult(req);
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                // ✅ Status 400 para erros de validação
+                return res.status(400).json({ erros: errors.mapped() });
+            }
 
-        if (!errors.isEmpty()) {
-            return res.json({ error: errors.mapped() });
+            const data = matchedData(req);
+
+            // ✅ Sem idSala manual — MongoDB gera o _id
+            const novaSala = new Sala({
+                nomeSala: data.nomeSala,
+                capacidadeTotal: data.capacidadeTotal,
+                statusSala: data.statusSala
+            });
+
+            await novaSala.save();
+
+            return res.status(201).json({ sala: novaSala });
+
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
         }
-
-        const data = matchedData(req);
-
-        const novaSala = new Sala({
-            idSala: data.idSala,
-            nomeSala: data.nomeSala,
-            capacidadeTotal: data.capacidadeTotal,
-            statusSala: data.statusSala
-        });
-
-        await novaSala.save();
-
-        res.json({ sala: novaSala });
     },
 
     getSalas: async (req, res) => {
-        const salas = await Sala.find();
-        res.json({ salas });
+        try {
+            const salas = await Sala.find().sort({ nomeSala: 1 });
+            return res.status(200).json({ salas });
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
+        }
     }
 };
