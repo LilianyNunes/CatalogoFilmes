@@ -1,32 +1,23 @@
 const mongoose = require('mongoose');
 
-// ✅ Sem idSessao manual — usa _id do MongoDB
-// ✅ idFilme e idSala usam ObjectId com ref correto
-// ✅ SEM campo assento — assentos são controlados pelo Grupo B
 const modelSchema = new mongoose.Schema({
     idFilme: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Filme',        // ✅ populate vai funcionar
+        ref: 'Filme',
         required: true
     },
     idSala: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Sala',         // ✅ populate vai funcionar
+        ref: 'Sala',
         required: true
     },
-    dataSessao: {
+    dataInicio: {
         type: Date,
         required: true
     },
-    horarioInicio: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    horarioFim: {
-        type: String,
-        required: true,
-        trim: true
+    dataFim: {
+        type: Date,
+        required: true
     },
     valorIngresso: {
         type: Number,
@@ -38,7 +29,6 @@ const modelSchema = new mongoose.Schema({
         enum: ['DISPONIVEL', 'CANCELADA', 'ENCERRADA'],
         default: 'DISPONIVEL'
     }
-    
 }, {
     timestamps: true,
     versionKey: false

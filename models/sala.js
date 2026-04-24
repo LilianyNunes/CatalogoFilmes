@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// ✅ Sem idSala manual — usa _id do MongoDB
 const modelSchema = new mongoose.Schema({
     nomeSala: {
         type: String,

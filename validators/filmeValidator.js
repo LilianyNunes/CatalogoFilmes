@@ -24,7 +24,6 @@ module.exports = {
             },
             toInt: true
         },
-        // ✅ Agora valida apenas os valores permitidos
         classificacaoIndicativa: {
             notEmpty: {
                 errorMessage: 'Classificação indicativa é obrigatória.'
@@ -35,7 +34,6 @@ module.exports = {
                 errorMessage: 'Classificação inválida. Use: Livre, 10, 12, 14, 16 ou 18.'
             }
         },
-        // ✅ isMongoId garante que é um ObjectId válido do MongoDB
         genero: {
             notEmpty: {
                 errorMessage: 'Gênero é obrigatório.'

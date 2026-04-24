@@ -7,13 +7,11 @@ module.exports = {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                // ✅ Status 400 para erros de validação
                 return res.status(400).json({ erros: errors.mapped() });
             }
 
             const data = matchedData(req);
 
-            // ✅ Verifica se o gênero existe no banco antes de salvar
             const generoExiste = await Genero.findById(data.genero);
             if (!generoExiste) {
                 return res.status(404).json({ erro: 'Gênero não encontrado.' });
@@ -32,7 +30,6 @@ module.exports = {
 
             await novoFilme.save();
 
-            // ✅ populate traz os dados do gênero junto na resposta
             const filmeSalvo = await Filme.findById(novoFilme._id).populate('genero', 'nomeGenero');
 
             return res.status(201).json({ filme: filmeSalvo });
@@ -44,7 +41,7 @@ module.exports = {
 
     getFilmes: async (req, res) => {
         try {
-            // ✅ populate traz os dados do gênero em cada filme
+           
             const filmes = await Filme.find()
                 .populate('genero', 'nomeGenero')
                 .sort({ createdAt: -1 });

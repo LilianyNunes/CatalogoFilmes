@@ -6,13 +6,12 @@ module.exports = {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                // ✅ Status 400 para erros de validação
+                
                 return res.status(400).json({ erros: errors.mapped() });
             }
 
             const data = matchedData(req);
 
-            // ✅ Sem idSala manual — MongoDB gera o _id
             const novaSala = new Sala({
                 nomeSala: data.nomeSala,
                 capacidadeTotal: data.capacidadeTotal,

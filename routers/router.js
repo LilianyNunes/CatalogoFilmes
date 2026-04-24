@@ -11,7 +11,6 @@ const salaValidator = require('../validators/salaValidator');
 const sessaoValidator = require('../validators/sessaoValidator');
 const generoValidator = require('../validators/generoValidator');
 
-// ── Health check ───────────────────────────────────────────────────
 router.get('/ping', (req, res) => {
     res.json({ retorno: true });
 });

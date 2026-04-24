@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-// ✅ genero usa ObjectId referenciando 'Genero'
-// ✅ classificacaoIndicativa tem enum definido
 const modelSchema = new mongoose.Schema({
     titulo: {
         type: String,
@@ -25,7 +23,7 @@ const modelSchema = new mongoose.Schema({
     },
     genero: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Genero',       // ✅ populate vai funcionar
+        ref: 'Genero',      
         required: true
     },
     idioma: {
