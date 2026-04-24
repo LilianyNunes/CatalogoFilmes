@@ -32,7 +32,5 @@ router.get('/salas', salaController.getSalas);
 router.post('/sessoes', sessaoValidator.addSessao, sessaoController.addSessao);
 router.get('/sessoes', sessaoController.getSessoes);
 
-// ❌ PUT /sessoes/:idSessao/assento REMOVIDA
-//    Assentos são responsabilidade do Grupo B (API de Assentos)
 
 module.exports = router;
