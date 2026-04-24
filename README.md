@@ -56,7 +56,6 @@ POST → http://localhost:7773/generos
 
 ```json
 {
-  "idGenero": "1",
   "nomeGenero": "Ação",
   "descricao": "Filmes com cenas de ação e aventura"
 }
@@ -70,7 +69,6 @@ POST → http://localhost:7773/filmes
 
 ```json
 {
-  "idFilme": "1",
   "titulo": "Batman",
   "sinopse": "Filme de ação e aventura",
   "duracaoMinutos": 120,
@@ -90,7 +88,6 @@ POST → http://localhost:7773/salas
 
 ```json
 {
-  "idSala": "1",
   "nomeSala": "Sala 1",
   "capacidadeTotal": 120,
   "tipoSala": "2D",
@@ -106,9 +103,6 @@ POST → http://localhost:7773/sessoes
 
 ```json
 {
-  "idSessao": "1",
-  "idFilme": "1",
-  "idSala": "1",
   "dataSessao": "2026-03-30",
   "horarioInicio": "19:00",
   "horarioFim": "21:00",
