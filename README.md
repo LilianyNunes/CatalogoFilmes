@@ -73,8 +73,8 @@ POST → http://localhost:7773/filmes
   "sinopse": "Filme de ação e aventura",
   "duracaoMinutos": 120,
   "classificacaoIndicativa": "12",
-  "genero": "Ação",
-  "idioma": "Dublado",
+  "genero": "cole_aqui_o_id_genero",
+  "idioma": "dublado",
   "statusExibicao": "EM_CARTAZ",
   "dataLancamento": "2026-03-20"
 }
@@ -91,7 +91,7 @@ POST → http://localhost:7773/salas
   "nomeSala": "Sala 1",
   "capacidadeTotal": 120,
   "tipoSala": "2D",
-  "statusSala": "DISPONIVEL"
+  "statusSala": "ATIVA"
 }
 ```
 
@@ -103,7 +103,11 @@ POST → http://localhost:7773/sessoes
 
 ```json
 {
+  "idFilme": "cole_aqui_o_id",
+  "idSala": "cole_aqui_o_id",
   "dataSessao": "2026-03-30",
+  "dataInicio": "2026-03-30T19:00:00.000Z",
+  "dataFim": "2026-03-30T21:00:00.000Z",
   "horarioInicio": "19:00",
   "horarioFim": "21:00",
   "valorIngresso": 30.00,
