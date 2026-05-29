@@ -103,8 +103,8 @@ POST → http://localhost:7773/sessoes
 
 ```json
 {
-  "idFilme": "cole_aqui_o_id",
-  "idSala": "cole_aqui_o_id",
+  "idFilme": "cole_aqui_o_id_filme",
+  "idSala": "cole_aqui_o_id_sala",
   "dataSessao": "2026-03-30",
   "dataInicio": "2026-03-30T19:00:00.000Z",
   "dataFim": "2026-03-30T21:00:00.000Z",
