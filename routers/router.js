@@ -1,35 +1,38 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const filmeController = require('../controller/filmeController');
-const salaController = require('../controller/salaController');
-const sessaoController = require('../controller/sessaoController');
-const generoController = require('../controller/generoController');
+const filmeController = require("../controller/filmeController");
+const salaController = require("../controller/salaController");
+const sessaoController = require("../controller/sessaoController");
+const generoController = require("../controller/generoController");
 
-const filmeValidator = require('../validators/filmeValidator');
-const salaValidator = require('../validators/salaValidator');
-const sessaoValidator = require('../validators/sessaoValidator');
-const generoValidator = require('../validators/generoValidator');
+const filmeValidator = require("../validators/filmeValidator");
+const salaValidator = require("../validators/salaValidator");
+const sessaoValidator = require("../validators/sessaoValidator");
+const generoValidator = require("../validators/generoValidator");
 
-router.get('/ping', (req, res) => {
-    res.json({ retorno: true });
+router.get("/ping", (req, res) => {
+  res.json({ retorno: true });
 });
 
 // ── GÊNEROS ────────────────────────────────────────────────────────
-router.post('/generos', generoValidator.addGenero, generoController.addGenero);
-router.get('/generos', generoController.getGeneros);
+router.post("/generos", generoValidator.addGenero, generoController.addGenero);
+router.get("/generos", generoController.getGeneros);
+router.delete("/generos/:id", generoController.deleteGenero);
 
 // ── FILMES ─────────────────────────────────────────────────────────
-router.post('/filmes', filmeValidator.addFilme, filmeController.addFilme);
-router.get('/filmes', filmeController.getFilmes);
+router.post("/filmes", filmeValidator.addFilme, filmeController.addFilme);
+router.get("/filmes", filmeController.getFilmes);
+router.delete("/filmes/:id", filmeController.deleteFilme);
 
 // ── SALAS ──────────────────────────────────────────────────────────
-router.post('/salas', salaValidator.addSala, salaController.addSala);
-router.get('/salas', salaController.getSalas);
+router.post("/salas", salaValidator.addSala, salaController.addSala);
+router.get("/salas", salaController.getSalas);
+router.delete("/salas/:id", salaController.deleteSala);
 
 // ── SESSÕES ────────────────────────────────────────────────────────
-router.post('/sessoes', sessaoValidator.addSessao, sessaoController.addSessao);
-router.get('/sessoes', sessaoController.getSessoes);
-
+router.post("/sessoes", sessaoValidator.addSessao, sessaoController.addSessao);
+router.get("/sessoes", sessaoController.getSessoes);
+router.delete("/sessoes/:id", sessaoController.deleteSessao);
 
 module.exports = router;
