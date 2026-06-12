@@ -113,28 +113,24 @@ module.exports = {
 
       const dataFinalReserva = dataHoraFim || dataFim || sessao.dataFim;
 
-      // Calcula o preço total considerando a quantidade de assentos escolhidos
-      const quantidadeAssentos = Array.isArray(assentos) ? assentos.length : 0;
-      const valorTotal = sessao.valorIngresso * quantidadeAssentos;
-
-      // Monta o payload final
-      // O uso do ...req.body garante que TUDO que o Front-end mandou (dados do cartão, PIX, etc) passe sem ser tocado
-      // Calcula o preço total (se não vier assento, ele finge que comprou 2)
+      // MOCK DE ASSENTOS: Se o front-end não mandar cadeiras, forçamos a compra de A1 e A2
       const assentosRequisitados =
         assentos && assentos.length > 0 ? assentos : ["A1", "A2"];
+
+      // Calcula o preço total considerando a quantidade de assentos que serão comprados
       const valorTotal = sessao.valorIngresso * assentosRequisitados.length;
 
-      // Monta o payload final com DADOS MOCKADOS (Falsos) caso o Front-end falhe
+      // MOCK DE PAGAMENTO: Monta o payload garantindo que a requisição nunca vá vazia
+      // Se o Front-end enviar os dados (req.body), o sistema usa os do Front.
+      // Se não enviar, usa os dados fixos para garantir que o Grupo C processe.
       const payloadReserva = {
-        // Pega o que o Tcherry mandar. Se ele não mandar, usa os dados da foto do Tiago:
         tipoPagamento: req.body.tipoPagamento || "CARTAO",
         numeroCartao: req.body.numeroCartao || "1234-5678-8765-4321",
         cvv: req.body.cvv || "234",
         validade: req.body.validade || "11/31",
         titular: req.body.titular || "Thiago Lima Santos",
-        valor: req.body.valor || valorTotal, // Finge que o cliente pagou o valor exato
+        valor: req.body.valor || valorTotal, // Forçamos o valor correto calculado para não dar erro
 
-        // Dados da sessão e cadeiras
         dataHoraFim: dataFinalReserva,
         assentos: assentosRequisitados,
         id_usuario: id_usuario || req.body.id_usuario || "usuario_teste",
@@ -144,14 +140,14 @@ module.exports = {
         valorIngresso: valorTotal,
       };
 
-      // O ID da sessão vai na URL exatamente como o Grupo B solicitou
+      // Dispara o payload final para o Grupo B
       const respostaReserva = await requisitarApiReserva(
         "POST",
         `/sessoes/${encodeURIComponent(id_sessao)}/reservas`,
         payloadReserva,
       );
 
-      // Repassa a resposta e o Status Code exatos que vieram do Grupo B / Grupo C direto para o Front-end
+      // Repassa a resposta do Grupo B/C de volta para o cliente
       return res.status(respostaReserva.statusCode).json(respostaReserva.body);
     } catch (error) {
       return res.status(500).json({
