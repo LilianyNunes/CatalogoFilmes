@@ -2,32 +2,39 @@ const http = require("http");
 const https = require("https");
 const { URL } = require("url");
 
-const Filme = require("../models/filme");
-const Genero = require("../models/genero");
-const Sala = require("../models/sala");
 const Sessao = require("../models/sessao");
 
-// ALTERE AQUI PARA TESTES: endpoint externo que recebe os dados do catálogo.
-const INTEGRACAO_ENDPOINT =
-  process.env.INTEGRACAO_ENDPOINT ||
-  "http://10.140.132.141:6999/sessoes/teste/reservas";
+const RESERVA_API_BASE_URL =
+  process.env.RESERVA_API_BASE_URL || "http://localhost:6999";
+
 const REQUEST_TIMEOUT_MS = 20_000;
 
-function enviarJsonComTimeout(endpoint, body, timeoutMs) {
-  const url = new URL(endpoint);
-  const data = JSON.stringify(body);
+function montarUrl(path) {
+  const baseUrl = RESERVA_API_BASE_URL.endsWith("/")
+    ? RESERVA_API_BASE_URL
+    : `${RESERVA_API_BASE_URL}/`;
+
+  return new URL(path.replace(/^\//, ""), baseUrl);
+}
+
+function requisitarApiReserva(method, path, body = null) {
+  const url = montarUrl(path);
   const transport = url.protocol === "https:" ? https : http;
 
+  const data = body ? JSON.stringify(body) : null;
+
   const options = {
-    method: "POST",
+    method,
     hostname: url.hostname,
     port: url.port || (url.protocol === "https:" ? 443 : 80),
     path: `${url.pathname}${url.search}`,
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(data),
-    },
+    headers: {},
   };
+
+  if (data) {
+    options.headers["Content-Type"] = "application/json";
+    options.headers["Content-Length"] = Buffer.byteLength(data);
+  }
 
   return new Promise((resolve, reject) => {
     const req = transport.request(options, (res) => {
@@ -38,83 +45,126 @@ function enviarJsonComTimeout(endpoint, body, timeoutMs) {
       });
 
       res.on("end", () => {
-        const parsedBody = (() => {
-          try {
-            return JSON.parse(responseBody);
-          } catch (_error) {
-            return responseBody;
-          }
-        })();
+        let parsedBody;
+
+        try {
+          parsedBody = responseBody ? JSON.parse(responseBody) : null;
+        } catch (_error) {
+          parsedBody = responseBody;
+        }
 
         resolve({
           statusCode: res.statusCode,
-          headers: res.headers,
           body: parsedBody,
         });
       });
     });
 
     req.on("timeout", () => {
-      req.destroy(new Error("Timeout de requisição atingido"));
+      req.destroy(new Error("Timeout ao comunicar com a API de reservas."));
     });
 
     req.on("error", (error) => {
       reject(error);
     });
 
-    req.setTimeout(timeoutMs);
-    req.write(data);
+    req.setTimeout(REQUEST_TIMEOUT_MS);
+
+    if (data) {
+      req.write(data);
+    }
+
     req.end();
   });
 }
 
 module.exports = {
-  enviarDados: async (req, res) => {
+  buscarAssentos: async (req, res) => {
     try {
-      const [filmes, generos, salas, sessoes] = await Promise.all([
-        Filme.find().lean(),
-        Genero.find().lean(),
-        Sala.find().lean(),
-        Sessao.find()
-          .populate(
-            "idFilme",
-            "titulo duracaoMinutos classificacaoIndicativa genero idioma statusExibicao dataLancamento",
-          )
-          .populate("idSala", "nomeSala capacidadeTotal statusSala")
-          .lean(),
-      ]);
+      const { id_sessao } = req.params;
 
-      const payload = {
-        filmes,
-        generos,
-        salas,
-        sessoes,
-      };
-
-      const respostaRemota = await enviarJsonComTimeout(
-        INTEGRACAO_ENDPOINT,
-        payload,
-        REQUEST_TIMEOUT_MS,
+      const respostaReserva = await requisitarApiReserva(
+        "GET",
+        `/sessoes/${encodeURIComponent(id_sessao)}/assentos`,
       );
 
-      return res.status(200).json({
-        integracao: {
-          endpoint: INTEGRACAO_ENDPOINT,
-          timeoutMs: REQUEST_TIMEOUT_MS,
-        },
-        payloadResumo: {
-          filmes: filmes.length,
-          generos: generos.length,
-          salas: salas.length,
-          sessoes: sessoes.length,
-        },
-        respostaRemota,
-      });
+      return res.status(respostaReserva.statusCode).json(respostaReserva.body);
     } catch (error) {
       return res.status(500).json({
-        erro: "Falha ao enviar dados para o endpoint de integração.",
+        erro: "Falha ao buscar assentos na API de reservas.",
         mensagem: error.message,
       });
     }
+  },
+
+  criarReserva: async (req, res) => {
+    try {
+      const { id_sessao } = req.params;
+      const { dataFim, dataHoraFim, assentos, id_usuario } = req.body;
+
+      // Busca a sessão no nosso banco de dados (Catálogo)
+      const sessao = await Sessao.findById(id_sessao);
+
+      if (!sessao) {
+        return res.status(404).json({
+          erro: "Sessão não encontrada na API Catálogo.",
+        });
+      }
+
+      const dataFinalReserva = dataHoraFim || dataFim || sessao.dataFim;
+
+      // Calcula o preço total considerando a quantidade de assentos escolhidos
+      const quantidadeAssentos = Array.isArray(assentos) ? assentos.length : 0;
+      const valorTotal = sessao.valorIngresso * quantidadeAssentos;
+
+      // Monta o payload final
+      // O uso do ...req.body garante que TUDO que o Front-end mandou (dados do cartão, PIX, etc) passe sem ser tocado
+      // Calcula o preço total (se não vier assento, ele finge que comprou 2)
+      const assentosRequisitados =
+        assentos && assentos.length > 0 ? assentos : ["A1", "A2"];
+      const valorTotal = sessao.valorIngresso * assentosRequisitados.length;
+
+      // Monta o payload final com DADOS MOCKADOS (Falsos) caso o Front-end falhe
+      const payloadReserva = {
+        // Pega o que o Tcherry mandar. Se ele não mandar, usa os dados da foto do Tiago:
+        tipoPagamento: req.body.tipoPagamento || "CARTAO",
+        numeroCartao: req.body.numeroCartao || "1234-5678-8765-4321",
+        cvv: req.body.cvv || "234",
+        validade: req.body.validade || "11/31",
+        titular: req.body.titular || "Thiago Lima Santos",
+        valor: req.body.valor || valorTotal, // Finge que o cliente pagou o valor exato
+
+        // Dados da sessão e cadeiras
+        dataHoraFim: dataFinalReserva,
+        assentos: assentosRequisitados,
+        id_usuario: id_usuario || req.body.id_usuario || "usuario_teste",
+        id_filme: String(sessao.idFilme),
+        id_sala: String(sessao.idSala),
+        horario: sessao.dataInicio,
+        valorIngresso: valorTotal,
+      };
+
+      // O ID da sessão vai na URL exatamente como o Grupo B solicitou
+      const respostaReserva = await requisitarApiReserva(
+        "POST",
+        `/sessoes/${encodeURIComponent(id_sessao)}/reservas`,
+        payloadReserva,
+      );
+
+      // Repassa a resposta e o Status Code exatos que vieram do Grupo B / Grupo C direto para o Front-end
+      return res.status(respostaReserva.statusCode).json(respostaReserva.body);
+    } catch (error) {
+      return res.status(500).json({
+        erro: "Falha ao criar reserva na comunicação entre as APIs.",
+        mensagem: error.message,
+      });
+    }
+  },
+
+  enviarDados: async (_req, res) => {
+    return res.status(200).json({
+      mensagem: "Controller de integração ativo.",
+      apiReserva: RESERVA_API_BASE_URL,
+    });
   },
 };
