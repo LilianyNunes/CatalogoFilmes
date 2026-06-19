@@ -55,7 +55,6 @@ module.exports = {
       return res.status(500).json({ erro: error.message });
     }
   },
-
   deleteSala: async (req, res) => {
     try {
       const { id } = req.params;

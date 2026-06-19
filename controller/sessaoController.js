@@ -105,7 +105,6 @@ module.exports = {
       return res.status(500).json({ erro: error.message });
     }
   },
-
   deleteSessao: async (req, res) => {
     try {
       const { id } = req.params;
