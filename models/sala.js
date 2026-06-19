@@ -1,30 +1,41 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const modelSchema = new mongoose.Schema({
+const modelSchema = new mongoose.Schema(
+  {
     nomeSala: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     capacidadeTotal: {
-        type: Number,
-        required: true,
-        min: 1
+      type: Number,
+      required: true,
+      min: 1,
     },
     statusSala: {
-        type: String,
-        enum: ['ATIVA', 'INATIVA', 'MANUTENCAO'],
-        default: 'ATIVA'
-    }
-}, {
+      type: String,
+      enum: ["ATIVA", "INATIVA", "MANUTENCAO"],
+      default: "ATIVA",
+    },
+  },
+  {
     timestamps: true,
-    versionKey: false
-});
+    versionKey: false,
+  },
+);
 
-const modelName = 'Sala';
+modelSchema.index(
+  { nomeSala: 1 },
+  {
+    unique: true,
+    collation: { locale: "pt", strength: 2 },
+  },
+);
+
+const modelName = "Sala";
 
 if (mongoose.connection && mongoose.connection.models[modelName]) {
-    module.exports = mongoose.connection.models[modelName];
+  module.exports = mongoose.connection.models[modelName];
 } else {
-    module.exports = mongoose.model(modelName, modelSchema);
+  module.exports = mongoose.model(modelName, modelSchema);
 }

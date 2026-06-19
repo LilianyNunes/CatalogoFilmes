@@ -5,7 +5,6 @@ const filmeController = require("../controller/filmeController");
 const salaController = require("../controller/salaController");
 const sessaoController = require("../controller/sessaoController");
 const generoController = require("../controller/generoController");
-const integracaoController = require("../controller/integracaoController");
 
 const filmeValidator = require("../validators/filmeValidator");
 const salaValidator = require("../validators/salaValidator");
@@ -36,10 +35,4 @@ router.post("/sessoes", sessaoValidator.addSessao, sessaoController.addSessao);
 router.get("/sessoes", sessaoController.getSessoes);
 router.delete("/sessoes/:id", sessaoController.deleteSessao);
 
-// ── INTEGRAÇÃO COM API DE RESERVAS ────────────────────────────────
-router.get("/sessoes/:id_sessao/assentos", integracaoController.buscarAssentos);
-router.post("/sessoes/:id_sessao/reservas", integracaoController.criarReserva);
-
-// Rota opcional de teste da integração
-router.post("/integracao/enviar", integracaoController.enviarDados);
 module.exports = router;

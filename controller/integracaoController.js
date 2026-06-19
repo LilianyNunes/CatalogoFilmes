@@ -78,30 +78,6 @@ function requisitarApiReserva(method, path, body = null) {
   });
 }
 
-function validarAssentos(assentos) {
-  if (!Array.isArray(assentos) || assentos.length === 0) {
-    return "O campo assentos deve ser uma lista com pelo menos um assento.";
-  }
-
-  const regexAssento = /^[A-E](10|[1-9])$/;
-
-  const assentosInvalidos = assentos.filter(
-    (assento) => !regexAssento.test(assento),
-  );
-
-  if (assentosInvalidos.length > 0) {
-    return `Assentos inválidos: ${assentosInvalidos.join(", ")}. Use de A1 até E10.`;
-  }
-
-  const assentosUnicos = new Set(assentos);
-
-  if (assentosUnicos.size !== assentos.length) {
-    return "A lista de assentos possui valores repetidos.";
-  }
-
-  return null;
-}
-
 module.exports = {
   buscarAssentos: async (req, res) => {
     try {
@@ -126,14 +102,6 @@ module.exports = {
       const { id_sessao } = req.params;
       const { dataFim, dataHoraFim, assentos, id_usuario } = req.body;
 
-      const erroAssentos = validarAssentos(assentos);
-
-      if (erroAssentos) {
-        return res.status(400).json({
-          erro: erroAssentos,
-        });
-      }
-
       const sessao = await Sessao.findById(id_sessao);
 
       if (!sessao) {
@@ -144,35 +112,37 @@ module.exports = {
 
       const dataFinalReserva = dataHoraFim || dataFim || sessao.dataFim;
 
-      if (!dataFinalReserva) {
-        return res.status(400).json({
-          erro: "Informe dataFim ou dataHoraFim para criar a reserva.",
-        });
-      }
+      const assentosRequisitados =
+        assentos && assentos.length > 0 ? assentos : ["A1", "A2"];
+
+      const valorTotal = sessao.valorIngresso * assentosRequisitados.length;
 
       const payloadReserva = {
+        tipoPagamento: req.body.tipoPagamento || "CARTAO",
+        numeroCartao: req.body.numeroCartao || "1234-5678-8765-4321",
+        cvv: req.body.cvv || "234",
+        validade: req.body.validade || "11/31",
+        titular: req.body.titular || "Thiago Lima Santos",
+        valor: req.body.valor || valorTotal,
+
         dataHoraFim: dataFinalReserva,
-        assentos,
-        id_usuario: id_usuario || "usuario_teste",
+        assentos: assentosRequisitados,
+        id_usuario: id_usuario || req.body.id_usuario || "usuario_teste",
         id_filme: String(sessao.idFilme),
         id_sala: String(sessao.idSala),
         horario: sessao.dataInicio,
+        valorIngresso: valorTotal,
       };
-
       const respostaReserva = await requisitarApiReserva(
         "POST",
         `/sessoes/${encodeURIComponent(id_sessao)}/reservas`,
         payloadReserva,
       );
 
-      return res.status(respostaReserva.statusCode).json({
-        mensagem: "Comunicação com API de reservas realizada.",
-        enviadoParaReserva: payloadReserva,
-        respostaReserva: respostaReserva.body,
-      });
+      return res.status(respostaReserva.statusCode).json(respostaReserva.body);
     } catch (error) {
       return res.status(500).json({
-        erro: "Falha ao criar reserva na API de reservas.",
+        erro: "Falha ao criar reserva na comunicação entre as APIs.",
         mensagem: error.message,
       });
     }
